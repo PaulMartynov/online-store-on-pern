@@ -76,7 +76,7 @@ ProductInfo.belongsTo(Product);
 Type.belongsToMany(Brand, { through: TypeBrand });
 Brand.belongsToMany(Type, { through: TypeBrand });
 
-module.exports = {
+export default {
   User,
   Cart,
   CartProduct,
