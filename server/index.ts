@@ -1,16 +1,18 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
 import sequelize from "./db";
 import "./models/models";
+import cors from "cors";
+import router from "./routes/index";
 
 const app: Express = express();
 const port = process.env.SERVER_PORT || 5000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello1");
-});
+app.use(cors());
+app.use(express.json());
+app.use("/api", router);
 
 const start = async () => {
   try {
@@ -22,6 +24,6 @@ const start = async () => {
   } catch (e) {
     console.log(e);
   }
-}
+};
 
 start();
