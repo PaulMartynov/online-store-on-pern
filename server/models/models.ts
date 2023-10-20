@@ -4,8 +4,8 @@ import { DataTypes } from "sequelize";
 const User = sequelize.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
-  password: { type: DataTypes.STRING},
-  roles: { type: DataTypes.STRING, defaultValue: "USER" }
+  password: { type: DataTypes.STRING },
+  roles: { type: DataTypes.STRING, defaultValue: "USER" },
 });
 
 const Cart = sequelize.define("cart", {
@@ -39,14 +39,14 @@ const Rating = sequelize.define("rating", {
   rate: { type: DataTypes.INTEGER, allowNull: false },
 });
 
-const ProductInfo = sequelize.define('product_info', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  title: {type: DataTypes.STRING, allowNull: false},
-  description: {type: DataTypes.STRING, allowNull: false},
-})
+const ProductInfo = sequelize.define("product_info", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  title: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.STRING, allowNull: false },
+});
 
-const TypeBrand = sequelize.define('type_brand', {
-  id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+const TypeBrand = sequelize.define("type_brand", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
 User.hasOne(Cart);
@@ -86,4 +86,4 @@ export default {
   Rating,
   ProductInfo,
   TypeBrand,
-}
+};
