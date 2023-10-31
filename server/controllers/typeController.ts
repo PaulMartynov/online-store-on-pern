@@ -17,17 +17,43 @@ class TypeController {
     const pType = await models.Type.create({ name });
     resp.json(pType);
   }
+
   async getAll(req: Request, resp: Response) {
     const types = await models.Type.findAll();
     resp.json(types);
   }
+
   async remove(req: Request, resp: Response, next: NextFunction) {
     const { id } = req.params;
     if (!id) {
       return next(ApiError.badRequest("Uncorrect type id"));
     }
-    await models.Type.destroy({ where: { id }});
+    try {
+      await models.Type.destroy({ where: { id }});
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      next(ApiError.internal(e.message));
+    }
     resp.status(200).json({ id });
+  }
+
+  async update(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect type id"));
+    }
+    const { name } = req.body;
+    if (!name) {
+      return next(ApiError.badRequest("Uncorrect type name"));
+    }
+
+    try {
+      await models.Type.update({ name }, { where: { id }});
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      next(ApiError.internal(e.message));
+    }
+    resp.status(200).json({ id, name });
   }
 }
 

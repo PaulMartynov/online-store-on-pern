@@ -20,7 +20,7 @@ class PropductController {
       if (!name || !price || !brandId || !typeId || !info || !img) {
         return next(
           ApiError.badRequest(
-            "Тeed all the parameters: name, price, brandId, typeId, info, img",
+            "Need all the parameters: name, price, brandId, typeId, info, img",
           ),
         );
       }
@@ -107,7 +107,62 @@ class PropductController {
     if (!id) {
       return next(ApiError.badRequest("Uncorrect product id"));
     }
-    await models.Product.destroy({ where: { id }});
+    try {
+      await models.Product.destroy({ where: { id }});
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      next(ApiError.internal(e.message));
+    }
+    
+    resp.status(200).json({ id });
+  }
+
+  async update(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect product id"));
+    }
+
+    try {
+      const { name, price, brandId, typeId, info } = req.body;
+      const { img } = req.files as FileArray;
+
+      if (!name || !price || !brandId || !typeId || !info || !img) {
+        return next(
+          ApiError.badRequest(
+            "Need all the parameters: name, price, brandId, typeId, info, img",
+          ),
+        );
+      }
+      
+      const fileName = `${uuid.v4()}.jpg`;
+      (img as UploadedFile).mv(
+        path.resolve(__dirname, "..", "static", fileName),
+      );
+  
+      const product = (await models.Product.update({
+        name,
+        price,
+        brandId,
+        typeId,
+        img: fileName,
+      }, { where: { id }})) as unknown as ProductInfoType;
+
+      if (info) {
+        const pinfo = JSON.parse(info);
+        pinfo.forEach((i: ProductInfoType) =>
+          models.ProductInfo.update({
+            title: i.title,
+            description: i.description,
+            deviceId: product.id,
+          }, { where: { deviceId: product.id }}),
+        );
+      }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      next(ApiError.internal(e.message));
+    }
     resp.status(200).json({ id });
   }
 }

@@ -7,5 +7,6 @@ router.post("/registration", userController.registration);
 router.post("/login", userController.login);
 router.get("/auth", userController.check);
 router.delete("/:id", userController.remove);
+router.put("/:id", userController.update);
 
 export default router;
