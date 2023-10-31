@@ -101,6 +101,15 @@ class PropductController {
     });
     resp.json(product);
   }
+
+  async remove(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect product id"));
+    }
+    await models.Product.destroy({ where: { id }});
+    resp.status(200).json({ id });
+  }
 }
 
 export default new PropductController();

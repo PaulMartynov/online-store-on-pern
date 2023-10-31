@@ -21,6 +21,14 @@ class TypeController {
     const types = await models.Type.findAll();
     resp.json(types);
   }
+  async remove(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect type id"));
+    }
+    await models.Type.destroy({ where: { id }});
+    resp.status(200).json({ id });
+  }
 }
 
 export default new TypeController();

@@ -21,6 +21,14 @@ class BrandController {
     const brands = await models.Brand.findAll();
     resp.json(brands);
   }
+  async remove(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect brand id"));
+    }
+    await models.Brand.destroy({ where: { id }});
+    resp.status(200).json({ id });
+  }
 }
 
 export default new BrandController();
