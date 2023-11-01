@@ -9,7 +9,7 @@ class UserController {
   async login(req: Request, resp: Response) {
     resp.json({ message: "Login" });
   }
-  
+
   async check(req: Request, resp: Response, next: NextFunction) {
     const { id } = req.query;
     if (!id) {
@@ -17,19 +17,19 @@ class UserController {
     }
     resp.status(200).json({ id });
   }
-  
+
   async remove(req: Request, resp: Response, next: NextFunction) {
     const { id } = req.params;
     if (!id) {
       return next(ApiError.badRequest("Uncorrect type id"));
     }
     try {
-      await models.User.destroy({ where: { id }});
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await models.User.destroy({ where: { id } });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));
     }
-    
+
     resp.status(200).json({ id });
   }
 

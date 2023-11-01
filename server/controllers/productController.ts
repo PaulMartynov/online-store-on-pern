@@ -108,12 +108,12 @@ class PropductController {
       return next(ApiError.badRequest("Uncorrect product id"));
     }
     try {
-      await models.Product.destroy({ where: { id }});
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await models.Product.destroy({ where: { id } });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));
     }
-    
+
     resp.status(200).json({ id });
   }
 
@@ -134,32 +134,116 @@ class PropductController {
           ),
         );
       }
-      
+
       const fileName = `${uuid.v4()}.jpg`;
       (img as UploadedFile).mv(
         path.resolve(__dirname, "..", "static", fileName),
       );
-  
-      const product = (await models.Product.update({
-        name,
-        price,
-        brandId,
-        typeId,
-        img: fileName,
-      }, { where: { id }})) as unknown as ProductInfoType;
+
+      const product = (await models.Product.update(
+        {
+          name,
+          price,
+          brandId,
+          typeId,
+          img: fileName,
+        },
+        { where: { id } },
+      )) as unknown as ProductInfoType;
 
       if (info) {
         const pinfo = JSON.parse(info);
-        pinfo.forEach((i: ProductInfoType) =>
-          models.ProductInfo.update({
-            title: i.title,
-            description: i.description,
-            deviceId: product.id,
-          }, { where: { deviceId: product.id }}),
-        );
+        pinfo.forEach((i: ProductInfoType) => {
+          if (i.id) {
+            models.ProductInfo.update(
+              {
+                title: i.title,
+                description: i.description,
+                deviceId: product.id,
+              },
+              { where: { deviceId: product.id, id: i.id } },
+            );
+          } else {
+            models.ProductInfo.create({
+              title: i.title,
+              description: i.description,
+              deviceId: product.id,
+            });
+          }
+        });
       }
-    
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      next(ApiError.internal(e.message));
+    }
+    resp.status(200).json({ id });
+  }
+
+  async patch(req: Request, resp: Response, next: NextFunction) {
+    const { id } = req.params;
+    if (!id) {
+      return next(ApiError.badRequest("Uncorrect product id"));
+    }
+
+    try {
+      const { name, price, brandId, typeId, info } = req.body;
+      const { img } = req.files as FileArray;
+
+      const productData: { [key: string]: unknown } = {};
+
+      if (img) {
+        const fileName = `${uuid.v4()}.jpg`;
+        (img as UploadedFile).mv(
+          path.resolve(__dirname, "..", "static", fileName),
+        );
+
+        productData.img = fileName;
+      }
+
+      if (name) {
+        productData.name = name;
+      }
+
+      if (price !== undefined) {
+        productData.price = price;
+      }
+
+      if (brandId) {
+        productData.brandId = brandId;
+      }
+
+      if (typeId) {
+        productData.typeId = typeId;
+      }
+
+      const product = (await models.Product.update(productData, {
+        where: { id },
+      })) as unknown as ProductInfoType;
+
+      if (info) {
+        const pinfo = JSON.parse(info);
+        pinfo.forEach((i: ProductInfoType) => {
+          if (i.id) {
+            models.ProductInfo.update(
+              {
+                title: i.title,
+                description: i.description,
+                deviceId: product.id,
+              },
+              { where: { deviceId: product.id, id: i.id } },
+            );
+          } else {
+            models.ProductInfo.create({
+              title: i.title,
+              description: i.description,
+              deviceId: product.id,
+            });
+          }
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));
     }

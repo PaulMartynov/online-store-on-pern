@@ -29,7 +29,7 @@ class TypeController {
       return next(ApiError.badRequest("Uncorrect type id"));
     }
     try {
-      await models.Type.destroy({ where: { id }});
+      await models.Type.destroy({ where: { id } });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));
@@ -48,7 +48,7 @@ class TypeController {
     }
 
     try {
-      await models.Type.update({ name }, { where: { id }});
+      await models.Type.update({ name }, { where: { id } });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));

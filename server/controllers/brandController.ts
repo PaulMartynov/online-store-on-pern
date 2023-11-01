@@ -29,12 +29,12 @@ class BrandController {
       return next(ApiError.badRequest("Uncorrect brand id"));
     }
     try {
-      await models.Brand.destroy({ where: { id }});
+      await models.Brand.destroy({ where: { id } });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       return next(ApiError.internal(e.message));
     }
-    
+
     resp.status(200).json({ id });
   }
 
@@ -49,7 +49,7 @@ class BrandController {
     }
 
     try {
-      await models.Brand.update({ name }, { where: { id }});
+      await models.Brand.update({ name }, { where: { id } });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       next(ApiError.internal(e.message));
