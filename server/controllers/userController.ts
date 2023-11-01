@@ -68,7 +68,7 @@ class UserController {
       const comparePassword = bcrypt.compareSync(password, user.password);
 
       if (!comparePassword) {
-        return next(ApiError.internal("Uncorrect password"));
+        return next(ApiError.badRequest("Uncorrect password"));
       }
 
       const token = generateToken(user.id, user.email, user.roles);
