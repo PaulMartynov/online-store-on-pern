@@ -7,7 +7,6 @@ interface UserRequest extends Request {
 }
 
 export default function (req: Request, res: Response, next: NextFunction) {
-  console.log("!!!!");
   if (req.method === "OPTIONS") {
     next();
   }
