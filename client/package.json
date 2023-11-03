@@ -1,0 +1,19 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PaulMartynov/online-store-on-pern.git"
+  },
+  "author": "JuFeng <p.martynov@antraks.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PaulMartynov/online-store-on-pern/issues"
+  },
+  "homepage": "https://github.com/PaulMartynov/online-store-on-pern#readme"
+}
