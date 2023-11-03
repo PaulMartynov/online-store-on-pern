@@ -11,6 +11,10 @@ interface User {
   roles: string;
 }
 
+interface UserRequest extends Request {
+  user: User;
+}
+
 const generateToken = (id: number, email: string, roles: string) => {
   return jwt.sign({ id, email, roles }, process.env.SECRET_KEY as Secret, {
     expiresIn: "3h",
@@ -19,7 +23,7 @@ const generateToken = (id: number, email: string, roles: string) => {
 
 class UserController {
   async registration(req: Request, resp: Response, next: NextFunction) {
-    const { email, password, roles } = req.body;
+    const { email, password } = req.body;
     if (!email || !password) {
       return next(ApiError.badRequest("Uncorrect email or password"));
     }
@@ -37,7 +41,7 @@ class UserController {
       const user = (await models.User.create({
         email,
         password: hashPasswd,
-        roles,
+        roles: "USER",
       })) as unknown as User;
       await models.Cart.create({ userId: user.id });
       const token = generateToken(user.id, user.email, user.roles);
@@ -133,11 +137,20 @@ class UserController {
       }
 
       if (password) {
+        if (
+          Number(id) !== user.id &&
+          !(req as UserRequest).user?.roles.includes("ADMIN")
+        ) {
+          return next(ApiError.forbidden("No access to change password"));
+        }
         const hashPasswd = await bcrypt.hash(password, 5);
         userParams.password = hashPasswd;
       }
 
       if (roles) {
+        if (!(req as UserRequest).user?.roles.includes("ADMIN")) {
+          return next(ApiError.forbidden("No privilege to change roles"));
+        }
         userParams.roles = roles;
       }
 
