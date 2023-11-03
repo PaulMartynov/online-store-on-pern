@@ -1,0 +1,13 @@
+.idea/
+.vscode
+.deb
+
+node_modules/
+dist
+build
+
+coverage
+storybook-static/
+
+.env
+.eslintcache
